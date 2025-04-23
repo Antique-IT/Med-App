@@ -3,10 +3,10 @@
     "name": "barsys",
     "slug": "barsys",
     "version": "1.0.0",
+    "sdkVersion": "51.0.0", 
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -18,7 +18,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "usesCleartextTraffic": true
       },
       "package": "com.jhon3424.barsys"
     },

@@ -1,158 +1,207 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, Dimensions, } from 'react-native';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { FlatList, View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Results from './Results'; // Import the Results component
+import Results from './Results';
 
 const HomeScreen = ({ navigation }: { navigation: any }) => {
-    const width = Dimensions.get('window').width;
-    const [text, onChangeText] = useState('');
-    const [isClicked, setIsClicked] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
+    
+    const categories = [
+        { id: 1, name: 'General Medicine', color: '#5fb9ff' },
+        { id: 2, name: 'Family Medicine', color: '#5fb9ff' },
+        { id: 3, name: 'Specialties', color: '#5fb9ff' }
+    ];
+
+    const quickActions = [
+        { id: 1, name: 'Nearby', active: false },
+        { id: 2, name: 'Top Rated', active: true }
+    ];
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollvertical} showsVerticalScrollIndicator={false}>
-            <SafeAreaView style={styles.container}>
-                <View>
-                    <Text style={[styles.text1, isClicked && styles.gone]}> Antique Medical Society </Text>
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                {!isSearchFocused && (
+                    <View style={styles.header}>
+                        <Text style={styles.title}>Find Your Doctor</Text>
+                    </View>
+                )}
+
+                <View style={styles.searchContainer}>
+                    <FontAwesome
+                        name="search"
+                        size={20}
+                        color="#666"
+                        style={[styles.searchIcon, isSearchFocused && styles.searchIconFocused]}
+                    />
+                    <TextInput
+                        style={[styles.searchInput, isSearchFocused && styles.searchInputFocused]}
+                        onChangeText={setSearchQuery}
+                        value={searchQuery}
+                        placeholder="Search doctors, specialties..."
+                        placeholderTextColor="#999"
+                        onFocus={() => setIsSearchFocused(true)}
+                        onBlur={() => setIsSearchFocused(false)}
+                    />
                 </View>
 
-                <TextInput
-                    style={[styles.textinput1, isClicked && styles.searching]}
-                    onChangeText={onChangeText}
-                    value={text}
-                    placeholder="Search"
-                    onFocus={() => setIsClicked(true)}
-                    onBlur={() => setIsClicked(false)}
-                />
+                {!isSearchFocused && (
+                    <View style={styles.contentContainer}>
+                        <View style={styles.quickActionsContainer}>
+                            {quickActions.map((action) => (
+                                <TouchableOpacity 
+                                    key={action.id}
+                                    style={[
+                                        styles.quickActionButton,
+                                        action.active && styles.quickActionButtonActive
+                                    ]}
+                                >
+                                    <Text style={[
+                                        styles.quickActionText,
+                                        action.active && styles.quickActionTextActive
+                                    ]}>
+                                        {action.name}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
 
-                <FontAwesome
-                    name="search"
-                    size={24}
-                    color="black"
-                    style={[styles.searchI, isClicked && styles.moveIcon]}
-                />
-
-                <View style={[styles.cont2, isClicked && styles.cont3]}>
-                    <View style={styles.cont4}>
-                        <TouchableOpacity style={[styles.button]}>
-                            <Text style={[styles.TB]}>Others Kaw</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button2]}>
-                            <Text style={[styles.TB2]}>Others Kita</Text>
-                        </TouchableOpacity>
+                        <Text style={styles.sectionTitle}>Categories</Text>
+                        <View style={styles.categoriesContainer}>
+                            {categories.map((category) => (
+                                <TouchableOpacity 
+                                    key={category.id}
+                                    style={[
+                                        styles.categoryButton,
+                                        { backgroundColor: category.color }
+                                    ]}
+                                >
+                                    <Text style={styles.categoryText}>{category.name}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
                     </View>
-                    <View style={styles.nbd}>
-                        <Text style={styles.nearbyD}>Doctors Nearby</Text>
-                    </View>
-                </View>
+                )}
 
-                {/* Show the Results component based on the search query */}
-                {text.length > 0 && <Results query={text} />}  {/* Pass the search query to Results */}
-            </SafeAreaView>
-        </ScrollView>
+                {searchQuery.length > 0 && <Results query={searchQuery} />}
+            </View>
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: "#ffffff",
+    },
     container: {
         flex: 1,
-        alignItems: "center",
-        backgroundColor: "#f5f5f5",
-        paddingTop: 0,
+        padding: 20,
+        backgroundColor: "#ffffff",
     },
-    text1: {
-        backgroundColor: '#f5f5f5',
-        color: 'black',
-        top: '22%',
+    header: {
+        marginBottom: 30,
+        alignItems: 'center',
+    },
+    title: {
+        color: '#2a2a2a',
         fontWeight: 'bold',
-        fontSize: 35,
+        fontSize: 28,
         textAlign: 'center',
     },
-    textinput1: {
-        borderWidth: 1,
-        alignItems: "center",
-        borderColor: 'black',
-        borderRadius: 50,
-        width: '80%',
-        top: '5%',
-        padding: 10,
-        paddingLeft: 50,
-    },
-    searchI: {
+    searchContainer: {
+        width: '100%',
         position: 'relative',
-        right: 130,
+        marginBottom: 20,
     },
-    gone: {
-        display: 'none',
+    searchInput: {
+        backgroundColor: '#f0f0f0',
+        borderRadius: 30,
+        width: '100%',
+        padding: 15,
+        paddingLeft: 50,
+        fontSize: 16,
+        color: '#333',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
-    searching: {
+    searchInputFocused: {
+        backgroundColor: '#fff',
+        borderColor: '#5fb9ff',
         borderWidth: 1,
-        alignItems: "center",
-        borderColor: 'black',
-        borderRadius: 50,
-        width: '80%',
-        top: '-5%',
     },
-    moveIcon: {
-        top: -54,
+    searchIcon: {
+        position: 'absolute',
+        left: 20,
+        top: 15,
+        zIndex: 1,
     },
-    cont2: {
-        top: 25,
+    searchIconFocused: {
+        color: '#5fb9ff',
     },
-    nbd: {
-        top: '120%',
-        alignItems: 'center',
+    contentContainer: {
+        width: '100%',
+        marginTop: 20,
+    },
+    quickActionsContainer: {
+        flexDirection: 'row',
         justifyContent: 'center',
+        marginBottom: 30,
     },
-    nearbyD: {
-        fontWeight: 'bold',
-    },
-    scrollvertical: {
-        flex: 1,
-    },
-    cont3: {
-        display: 'none',
-    },
-    button: {
-        width: 150,
-        height: 50,
-        borderRadius: 10,
-        backgroundColor: '#e0dcdc',
-        borderColor: '#a6a6a6',
+    quickActionButton: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 20,
         borderWidth: 1,
-        transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
+        borderColor: '#ddd',
+        marginHorizontal: 10,
+        backgroundColor: '#fff',
     },
-    button2: {
-        width: 150,
-        height: 50,
-        borderRadius: 10,
+    quickActionButtonActive: {
         backgroundColor: '#5fb9ff',
         borderColor: '#0f8ad1',
-        borderWidth: 1,
-        transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
     },
-    TB: {
-        textAlign: 'center',
-        justifyContent: 'center',
-        paddingTop: 14,
-        paddingLeft: 20,
-        paddingRight: 20,
+    quickActionText: {
+        fontWeight: '600',
+        color: '#666',
+    },
+    quickActionTextActive: {
+        color: '#fff',
+    },
+    sectionTitle: {
+        fontSize: 18,
         fontWeight: 'bold',
+        color: '#2a2a2a',
+        marginBottom: 15,
+        paddingLeft: 10,
     },
-    TB2: {
-        textAlign: 'center',
-        justifyContent: 'center',
-        paddingTop: 14,
-        paddingLeft: 20,
-        paddingRight: 20,
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    cont4: {
+    categoriesContainer: {
         flexDirection: 'row',
-        gap: 0,
-        top: 20,
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+    },
+    categoryButton: {
+        width: '48%',
+        marginBottom: 15,
+        borderRadius: 15,
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    categoryText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: 'center',
     },
 });
 

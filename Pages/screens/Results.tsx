@@ -32,7 +32,7 @@ const Results: React.FC<ResultsProps> = ({ query }) => {
     setError(null);
 
     try {
-      const response = await axios.get('http://192.168.0.107:3000/search', { 
+      const response = await axios.get('http://192.168.0.108:3000/search', { 
         params: { query } 
       });
       setResults(response.data); // Assuming the response is an array of ResultItem
