@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import { MaterialIcons } from '@expo/vector-icons';
 
-// Define the type for each result item
 interface ResultItem {
   id: number;
   name: string;
   specialty?: string;
   location?: string;
+  rating?: number;
 }
 
-// Define the type for the props passed to the Results component
 interface ResultsProps {
-  query: string; // Or use a more specific type if needed
+  query: string;
 }
 
 const Results: React.FC<ResultsProps> = ({ query }) => {
@@ -26,95 +26,185 @@ const Results: React.FC<ResultsProps> = ({ query }) => {
     }
   }, [query]);
 
-  // Function to fetch the results from the server
   const fetchResults = async (query: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.get('http://192.168.0.108:3000/search', { 
+      const response = await axios.get('http://192.168.100.8:3000/search', { 
         params: { query } 
       });
-      setResults(response.data); // Assuming the response is an array of ResultItem
+      setResults(response.data);
     } catch (err) {
-      setError('Error fetching results');
+      setError('Error fetching results. Please try again.');
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Render individual result item
   const renderItem = ({ item }: { item: ResultItem }) => (
     <TouchableOpacity style={styles.itemContainer}>
-      <Text style={styles.itemName}>{item.name}</Text>
-      <Text style={styles.itemSpecialty}>
-        {item.specialty ? `Specialty: ${item.specialty}` : 'Specialty: Not Available'}
-      </Text>
-      <Text style={styles.itemLocation}>
-        {item.location ? `Location: ${item.location}` : 'Location: Not Available'}
-      </Text>
+      <View style={styles.itemHeader}>
+        <MaterialIcons name="account-circle" size={32} color="#4b86b4" />
+        <View style={styles.itemInfo}>
+          <Text style={styles.itemName}>{item.name}</Text>
+          {item.rating && (
+            <View style={styles.ratingContainer}>
+              <MaterialIcons name="star" size={16} color="#FFD700" />
+              <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
+            </View>
+          )}
+        </View>
+      </View>
+      
+      {item.specialty && (
+        <View style={styles.detailRow}>
+          <MaterialIcons name="medical-services" size={18} color="#28a745" />
+          <Text style={styles.itemDetail}>{item.specialty}</Text>
+        </View>
+      )}
+      
+      {item.location && (
+        <View style={styles.detailRow}>
+          <MaterialIcons name="location-on" size={18} color="#2a4d69" />
+          <Text style={styles.itemDetail}>{item.location}</Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 
-  // Render the loading or error state
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" style={styles.loader} />;
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4b86b4" />
+        <Text style={styles.loadingText}>Finding doctors...</Text>
+      </View>
+    );
   }
 
   if (error) {
-    return <Text style={styles.errorText}>{error}</Text>;
+    return (
+      <View style={styles.errorContainer}>
+        <MaterialIcons name="error-outline" size={32} color="#e63946" />
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
   }
 
-  // Render the list of results
   return (
     <View style={styles.container}>
-      <FlatList
-        data={results}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={<Text>No results found</Text>}
-      />
+      {results.length > 0 ? (
+        <FlatList
+          data={results}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <MaterialIcons name="search-off" size={48} color="#2a4d69" />
+          <Text style={styles.emptyText}>No doctors found</Text>
+          <Text style={styles.emptySubtext}>Try a different search term</Text>
+        </View>
+      )}
     </View>
   );
 };
 
-// Styles for the component
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#f8f9fa',
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
-  loader: {
-    marginTop: 20,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    color: '#2a4d69',
+    fontSize: 16,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   errorText: {
-    color: 'red',
+    marginTop: 16,
+    color: '#e63946',
+    fontSize: 16,
     textAlign: 'center',
-    marginTop: 20,
+  },
+  listContent: {
+    paddingBottom: 20,
   },
   itemContainer: {
-    padding: 15,
-    marginBottom: 10,
-    backgroundColor: '#f4f4f4',
-    borderRadius: 5,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  itemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  itemInfo: {
+    marginLeft: 12,
+    flex: 1,
   },
   itemName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: '#2a4d69',
   },
-  itemSpecialty: {
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  ratingText: {
+    marginLeft: 4,
+    color: '#666',
+    fontSize: 14,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  itemDetail: {
+    marginLeft: 8,
     fontSize: 14,
     color: '#555',
   },
-  itemLocation: {
-    fontSize: 12,
-    color: '#777',
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    marginTop: 16,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2a4d69',
+  },
+  emptySubtext: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#666',
   },
 });
 

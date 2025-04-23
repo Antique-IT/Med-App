@@ -1,8 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './Pages/screens/HomeScreen';
-import RequestScreen from './Pages/screens/RequestScreen';
-import StatusScreen from './Pages/screens/StatusScreen';
 import { TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { View, Text, StyleSheet, Platform } from 'react-native';
@@ -177,42 +175,6 @@ export default function App() {
               right: 0,
             },
           })}
-        />
-        <Stack.Screen 
-          name="Request" 
-          component={RequestScreen} 
-          options={{ 
-            title: 'Request Documents',
-            headerBackTitleVisible: false,
-            headerTitleStyle: styles.headerTitle,
-            headerBackImage: () => (
-              <TouchableOpacity style={styles.backButton}>
-                <MaterialIcons 
-                  name="arrow-back" 
-                  size={24} 
-                  color="#4b86b4" 
-                />
-              </TouchableOpacity>
-            ),
-          }} 
-        />
-        <Stack.Screen 
-          name="Status" 
-          component={StatusScreen} 
-          options={{ 
-            title: 'Check Status',
-            headerBackTitleVisible: false,
-            headerTitleStyle: styles.headerTitle,
-            headerBackImage: () => (
-              <TouchableOpacity style={styles.backButton}>
-                <MaterialIcons 
-                  name="arrow-back" 
-                  size={24} 
-                  color="#4b86b4" 
-                />
-              </TouchableOpacity>
-            ),
-          }} 
         />
         <Stack.Screen 
           name="FindDoctor" 

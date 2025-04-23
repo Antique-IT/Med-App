@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { FlatList, View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Results from './Results';
 
 const HomeScreen = ({ navigation }: { navigation: any }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const [activeTab, setActiveTab] = useState('home');
     
     const categories = [
         { id: 1, name: 'General Medicine', color: '#5fb9ff' },
@@ -18,6 +20,22 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
         { id: 1, name: 'Nearby', active: false },
         { id: 2, name: 'Top Rated', active: false }
     ];
+
+    const renderBottomTab = (iconName: string, label: string, tabName: string) => (
+        <TouchableOpacity 
+            style={styles.tabButton}
+            onPress={() => setActiveTab(tabName)}
+        >
+            <MaterialCommunityIcons 
+                name={iconName} 
+                size={24} 
+                color={activeTab === tabName ? '#4b86b4' : '#888'} 
+            />
+            <Text style={[styles.tabText, { color: activeTab === tabName ? '#4b86b4' : '#888' }]}>
+                {label}
+            </Text>
+        </TouchableOpacity>
+    );
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -80,11 +98,25 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
                                 </TouchableOpacity>
                             ))}
                         </View>
-
                     </View>
                 )}
 
                 {searchQuery.length > 0 && <Results query={searchQuery} />}
+            </View>
+
+            {/* Bottom Navigator */}
+            <View style={styles.bottomNavigator}>
+                {renderBottomTab('home', 'Home', 'home')}
+                {renderBottomTab('information-outline', 'About', 'about')}
+                {renderBottomTab('email-outline', 'Contact', 'contact')}
+                {renderBottomTab('help-circle-outline', 'Help', 'help')}
+            </View>
+
+            {/* Copyright Footer */}
+            <View style={styles.footer}>
+                <Text style={styles.copyrightText}>
+                    © 2025 Antique Medical Society
+                </Text>
             </View>
         </SafeAreaView>
     );
@@ -99,6 +131,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         backgroundColor: "#ffffff",
+        marginBottom: 60, // Space for bottom navigator
     },
     header: {
         marginBottom: 30,
@@ -205,6 +238,46 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
         textAlign: 'center',
+    },
+    bottomNavigator: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        height: 60,
+        backgroundColor: '#ffffff',
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        paddingHorizontal: 10,
+    },
+    tabButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 8,
+    },
+    tabText: {
+        fontSize: 12,
+        marginTop: 4,
+        fontWeight: '500',
+    },
+    footer: {
+        position: 'absolute',
+        bottom: 60,
+        left: 0,
+        right: 0,
+        paddingVertical: 10,
+        backgroundColor: '#f8f9fa',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
+    },
+    copyrightText: {
+        fontSize: 12,
+        color: '#666',
     },
 });
 
