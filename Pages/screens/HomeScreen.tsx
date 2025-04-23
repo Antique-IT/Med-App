@@ -16,7 +16,7 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
 
     const quickActions = [
         { id: 1, name: 'Nearby', active: false },
-        { id: 2, name: 'Top Rated', active: true }
+        { id: 2, name: 'Top Rated', active: false }
     ];
 
     return (
@@ -73,14 +73,14 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
                                 <TouchableOpacity 
                                     key={category.id}
                                     style={[
-                                        styles.categoryButton,
-                                        { backgroundColor: category.color }
+                                        styles.categoryButton
                                     ]}
                                 >
                                     <Text style={styles.categoryText}>{category.name}</Text>
                                 </TouchableOpacity>
                             ))}
                         </View>
+
                     </View>
                 )}
 
@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     searchInputFocused: {
-        backgroundColor: '#fff',
-        borderColor: '#5fb9ff',
+        backgroundColor: '#f0f0f0',
+        borderColor: '#f0f0f0',
         borderWidth: 1,
     },
     searchIcon: {
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     searchIconFocused: {
-        color: '#5fb9ff',
+        color: 'grey',
     },
     contentContainer: {
         width: '100%',
@@ -187,7 +187,8 @@ const styles = StyleSheet.create({
     categoryButton: {
         width: '48%',
         marginBottom: 15,
-        borderRadius: 15,
+        borderWidth:1,
+        borderRadius: 100,
         padding: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -196,9 +197,11 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
+        borderColor:'grey',
+        backgroundColor:'white'
     },
     categoryText: {
-        color: '#fff',
+        color: 'grey',
         fontWeight: 'bold',
         fontSize: 16,
         textAlign: 'center',
